@@ -1,7 +1,6 @@
-import { CheckCircle, CircleDashed, UserCog } from "lucide-react";
+import { CheckCircle, CircleDashed } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "../../components/button";
 import { api } from "../../lib/axios";
 
 export function Guests() {
@@ -44,10 +43,6 @@ const [guests, setGuests] = useState<GuestsProps[]>([])
           </div>
         ))}
       </div>
-      <Button variant="secundary" size="full">
-        <UserCog className="size-5" />
-        Gerenciar convidados
-      </Button>
     </div>
   )
 }

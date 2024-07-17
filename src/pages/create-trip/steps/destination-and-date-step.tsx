@@ -39,7 +39,8 @@ export function DestinationAndDateStep({
     <div className="h-16 bg-zinc-900 px-4 rounded-xl flex items-center shadow-shape gap-3">
       <div className="flex items-center gap-2 flex-1">
         <MapPin className="size-5 text-zinc-400" />
-        <input 
+        <input
+          required 
           disabled={isGuestsInputOpen}
           type="text" 
           placeholder="Para onde você vai?"
@@ -67,7 +68,15 @@ export function DestinationAndDateStep({
               </div>  
             </div>
 
-            <DayPicker mode="range" selected={eventStartAndEndDates} onSelect={setEventStartAndendDates}  />
+            <DayPicker
+              mode="range"
+              selected={eventStartAndEndDates} 
+              onSelect={setEventStartAndendDates}
+            />
+
+            <Button onClick={closeDatePicker} size="full" variant="primary">
+              Salvar
+            </Button>
           </div>
         </div>
       )} 

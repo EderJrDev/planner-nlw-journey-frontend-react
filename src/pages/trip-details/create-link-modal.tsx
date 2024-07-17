@@ -12,24 +12,32 @@ interface CreateLinkModalProps {
 
 export function CreateLinkModal({ closeCreateLinkModal }: CreateLinkModalProps) {
   const tripId = useParams().tripId
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
   const { fetchLinks } = useLinks();
 
+  const [title, setTitle] = useState('')
+  const [url, setUrl] = useState('')
+  const [loading, setLoading] = useState(false)
+
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-  
-    console.log(title, url)
-
-    const data = await api.post(`/trips/${tripId}/links`, {
-      title: title,
-      url: url
-    })  
-
-    console.log(data)
+    try {
+      setLoading(true)
+      event.preventDefault()
     
-    fetchLinks();
-    closeCreateLinkModal()
+      console.log(title, url)
+  
+      await api.post(`/trips/${tripId}/links`, {
+        title: title,
+        url: url
+      }) 
+      
+      fetchLinks();
+      closeCreateLinkModal()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
   }
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
@@ -51,6 +59,7 @@ export function CreateLinkModal({ closeCreateLinkModal }: CreateLinkModalProps) 
           <Tag className="text-zinc-400 size-5" />
           <input
             name="title"
+            required
             placeholder="Qual o nome" 
             className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
             onChange={event => setTitle(event.target.value)}
@@ -62,13 +71,14 @@ export function CreateLinkModal({ closeCreateLinkModal }: CreateLinkModalProps) 
             <User className="text-zinc-400 size-5" />
             <input
             name="title"
+            required
             placeholder="Qual o link" 
             className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
             onChange={event => setUrl(event.target.value)}
           />
           </div>
         </div>
-        <Button type="submit" variant="primary" size="full">
+        <Button isLoading={loading} type="submit" variant="primary" size="full">
           Salvar link
         </Button>
       </form>

@@ -17,6 +17,7 @@ interface DestinationAndDateHeaderProps {
 export function DestinationAndDateHeader() {
   const tripId = useParams().tripId  
   const [destination, setDestination] = useState('')
+  const [loading, setLoading] = useState(false)
   const [activities, setActivities] = useState<DestinationAndDateHeaderProps>()
   const [modalEditTrip, setModalEditTrip] = useState(false)
   const [eventStartAndEndDates, setEventStartAndendDates] = useState<DateRange | undefined>()
@@ -44,16 +45,23 @@ export function DestinationAndDateHeader() {
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    await api.put(`/trips/${tripId}`, {
-      destination: destination,
-      starts_at: eventStartAndEndDates?.from,
-      ends_at: eventStartAndEndDates?.to
-    })  
-
-    getActivities()
-    closeModalEditTrip()
+    try {
+      setLoading(true)
+      event.preventDefault()
+  
+      await api.put(`/trips/${tripId}`, {
+        destination: destination,
+        starts_at: eventStartAndEndDates?.from,
+        ends_at: eventStartAndEndDates?.to
+      })  
+  
+      getActivities()
+      closeModalEditTrip()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const displayedDate = eventStartAndEndDates && eventStartAndEndDates.from && eventStartAndEndDates.to 
@@ -104,7 +112,8 @@ export function DestinationAndDateHeader() {
               <div className="h-14 px-4 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center gap-2">
               <MapPin className="size-5 text-zinc-400" />
                   <input 
-                    type="text" 
+                    type="text"
+                    required 
                     value={destination ? destination : activities?.destination}
                     placeholder="Para onde você vai?"
                     className="bg-transparent text-lg placeholder-zinc-400 outline-none flex-1" 
@@ -122,7 +131,7 @@ export function DestinationAndDateHeader() {
                 </button>
                 </div>
               </div>
-              <Button type="submit" variant="primary" size="full">
+              <Button isLoading={loading} type="submit" variant="primary" size="full">
                 Atualizar
               </Button>
             </form>

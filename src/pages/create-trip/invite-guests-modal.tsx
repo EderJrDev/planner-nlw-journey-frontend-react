@@ -51,6 +51,7 @@ export function InviteGuessModal({
           <input
             type="email"
             name="email"
+            required
             placeholder="Digite o e-mail do convidado" 
             className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
           />

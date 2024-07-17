@@ -15,10 +15,13 @@ export function CreateActiveModal({ closeCreateActivityModal }: CreateActivityMo
   const tripId = useParams().tripId
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
-  const { fetchActivities } = useActivities();
+  const [loading, setLoading] = useState(false)
+  const { fetchActivities } = useActivities()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+   try {
     event.preventDefault()
+    setLoading(true)
     
     const formatDate = format(date, 'yyyy-MM-dd HH:mm:ss')
     console.log(title, formatDate)
@@ -32,6 +35,11 @@ export function CreateActiveModal({ closeCreateActivityModal }: CreateActivityMo
     
     fetchActivities();
     closeCreateActivityModal()
+   } catch (error) {
+    console.log(error)
+   } finally {
+    setLoading(false)
+   }
   }
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
@@ -53,6 +61,7 @@ export function CreateActiveModal({ closeCreateActivityModal }: CreateActivityMo
           <Tag className="text-zinc-400 size-5" />
           <input
             name="title"
+            required
             placeholder="Qual a atividade" 
             className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
             onChange={event => setTitle(event.target.value)}
@@ -63,6 +72,7 @@ export function CreateActiveModal({ closeCreateActivityModal }: CreateActivityMo
           <div className="h-14 flex-1 px-4 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center gap-2">
             <User className="text-zinc-400 size-5" />
             <input
+              required
               type="datetime-local"
               name="occurs_at"
               placeholder="Data e horário da atividade" 
@@ -71,7 +81,7 @@ export function CreateActiveModal({ closeCreateActivityModal }: CreateActivityMo
             />
           </div>
         </div>
-        <Button type="submit" variant="primary" size="full">
+        <Button isLoading={loading} type="submit" variant="primary" size="full">
           Salvar atividade
         </Button>
       </form>

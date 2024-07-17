@@ -19,10 +19,11 @@ export function CreateTripPage() {
   const [destination, setDestination] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [ownerEmail,setOwnerEmai] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const [eventStartAndEndDates, setEventStartAndendDates] = useState<DateRange | undefined>()
 
-  const [emailToInvite, setEmailToInvite] = useState(['jessica.white44@yahoo.com'])
+  const [emailToInvite, setEmailToInvite] = useState<string[]>([])
 
   function openGuestsInput() {
     setIsGuestsInputOpen(true)
@@ -68,35 +69,43 @@ export function CreateTripPage() {
   }
 
   async function createTrip(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    if(!destination) {
-      return
-    } 
-
-    if(!eventStartAndEndDates?.from || !eventStartAndEndDates?.to) {
-      return
-    }
-
-    if(emailToInvite.length === 0) {
-      return
-    }
-
-    if(!ownerName || !ownerEmail) {
-      return
-    }
+    try {
+      setLoading(true)
       
-    const response = await api.post('/trips', {
-      destination: destination,
-      starts_at: eventStartAndEndDates?.from,
-      ends_at: eventStartAndEndDates?.to,
-      owner_name: ownerName,
-      owner_email: ownerEmail,
-      emails_to_invite: emailToInvite
-    })
-    
-    const { tripId } = response.data;
-    navigate(`/trips/${tripId}`)
+      event.preventDefault()
+  
+      if(!destination) {
+        return
+      } 
+  
+      if(!eventStartAndEndDates?.from || !eventStartAndEndDates?.to) {
+        return
+      }
+  
+      if(emailToInvite.length === 0) {
+        return
+      }
+  
+      if(!ownerName || !ownerEmail) {
+        return
+      }
+        
+      const response = await api.post('/trips', {
+        destination: destination,
+        starts_at: eventStartAndEndDates?.from,
+        ends_at: eventStartAndEndDates?.to,
+        owner_name: ownerName,
+        owner_email: ownerEmail,
+        emails_to_invite: emailToInvite
+      })
+      
+      const { tripId } = response.data;
+      navigate(`/trips/${tripId}`)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -142,6 +151,7 @@ export function CreateTripPage() {
 
     {isConfirmTripModalOpen && (
       <ConfirmTripModal 
+        loading={loading}
         closeConfirmTripModal={closeConfirmTripModal}
         createTrip={createTrip}
         setOwnerName={setOwnerName}
