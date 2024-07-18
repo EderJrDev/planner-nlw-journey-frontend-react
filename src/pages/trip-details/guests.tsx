@@ -21,7 +21,7 @@ const [guests, setGuests] = useState<GuestsProps[]>([])
 
   useEffect(() => {
     fetchGuests()
-  }, [])
+  }, [tripId])
 
   return (
     <div className="space-y-6">

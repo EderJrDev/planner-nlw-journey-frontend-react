@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-interface Activity {
+export interface Activity {
   id: string;
   title: string;
   occurs_at: string;
